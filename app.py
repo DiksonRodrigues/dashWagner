@@ -30,4 +30,6 @@ dataframe = dataframe.query("Bairro == @bairro")
 st.header("Eleições 2024 Wagner da Acerola")
 st.markdown("""---""")
 
+total_aptos = round(dataframe["Aptos"].sum(),2)
+
 st.dataframe(dataframe)
