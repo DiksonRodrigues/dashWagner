@@ -1,46 +1,63 @@
 import pandas as pd
-import numpy as np
 import streamlit as st
-import plotly_express as px
 
-dataframe = pd.read_csv('dados-corretos.csv', index_col=0, encoding='utf8')
+# Leitura dos dados
+dataframe_corretos = pd.read_csv('dados-corretos.csv', encoding='utf8')
 
-
-#Configurações da pagina.
+# Configurações da página
 st.set_page_config(
-    page_title="Wagner da acerola",
-    layout= "wide",
+    page_title="Wagner da Acerola",
+    layout="wide",
+    page_icon="cherries",
     initial_sidebar_state="collapsed"
 )
 
-#FILTROS DO MENU LATERAL
-bairro = st.sidebar.multiselect(
-    key= 1,
-    label= "Bairro",
-    options=dataframe["Bairro"].unique(),
-    default=dataframe["Bairro"].unique()
+st.markdown("#")
+# DETALHES DA PÁGINA INICIAL
+st.header(":cherries: Eleições 2024 Wagner da Acerola :cherries:")
+st.markdown("#")
+
+# Cálculo dos totais
+total_aptos = round(dataframe_corretos["Aptos"].sum(), 2)
+total_bairro = len(dataframe_corretos["Bairro"].unique())
+total_local = len(dataframe_corretos["Local"].unique())
+average_ticket = round((total_aptos / total_bairro / total_local), 2)
+
+# Selecione os bairros
+st.markdown("## Selecione os Bairros:")
+bairros_selecionados = st.multiselect(
+    label="",
+    options=dataframe_corretos["Bairro"].unique(),
+    default=dataframe_corretos["Bairro"].unique()
 )
 
-# FAZENDO FUNCIONAR OS FILTROS
-dataframe = dataframe.query("Bairro == @bairro")
+# Aplicando o filtro de bairro após a seleção do usuário
+dataframe_corretos_filtrado = dataframe_corretos.query("Bairro == @bairros_selecionados")
 
+# Recálculo dos totais após aplicação do filtro de bairro
+total_aptos_filtrado = round(dataframe_corretos_filtrado["Aptos"].sum(), 2)
+total_bairro_filtrado = len(dataframe_corretos_filtrado["Bairro"].unique())
+total_local_filtrado = len(dataframe_corretos_filtrado["Local"].unique())
 
-
-# DETALHES DA PAGINA INICIAL
-st.header("Eleições 2024 Wagner da Acerola")
+st.markdown("#")
+col1, col2, col3 = st.columns(3)
+col1.metric("Total de Bairros", total_bairro_filtrado)
+col2.metric("Locais de Votação", total_local_filtrado)
+col3.metric("Total de Votantes", total_aptos_filtrado)
 st.markdown("""---""")
 
-# CARDS ACIMA DA TABELA
-total_aptos = round(dataframe["Aptos"].sum(),2)
-total_bairro = len(dataframe["Bairro"].unique())
-total_local = len(dataframe["Local"].unique())
-average_ticket = round((total_aptos / total_bairro / total_local),2)
+# Exibição dos dados filtrados
+st.dataframe(dataframe_corretos_filtrado)
+st.markdown("#")
 
-col1,col2,col3 = st.columns(3)
-col1.metric("Total de Bairros", total_bairro)
-col2.metric("Locais de Votação", total_local)
-col3.metric("Total de Votantes", total_aptos)
+# Cálculo da porcentagem do eleitorado representado pelos 1500 votos necessários
+votos_necessarios = 2000
+porcentagem_eleitorado = (votos_necessarios / total_aptos_filtrado) * 100
 
+# Verifica se a porcentagem calculada é menor que 0.01% do eleitorado
+# Se sim, ajusta a porcentagem para garantir que o número de votos seja no mínimo 1500
+if porcentagem_eleitorado < 0.01:
+    porcentagem_eleitorado = 0.01
+    votos_necessarios = int((porcentagem_eleitorado / 100) * total_aptos_filtrado)
 
-
-st.dataframe(dataframe)
+st.write(f"Para alcançar os {votos_necessarios} votos necessários, você precisa conquistar aproximadamente {porcentagem_eleitorado:.2f}% do eleitorado.")
