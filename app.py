@@ -14,14 +14,14 @@ st.set_page_config(
 )
 
 # Cabeçalho na página principal
-st.markdown("#")
+
 st.header(":cherries: Eleições 2024 Wagner da Acerola :cherries:")
-st.markdown("#")
+
 
 # Cabeçalho no menu lateral
 st.sidebar.markdown("#")
 st.sidebar.header(":cherries: Eleições 2024 Wagner da Acerola :cherries:")
-st.sidebar.markdown("#")
+
 
 # Cálculo dos totais
 total_aptos = round(dataframe_corretos["Aptos"].sum(), 2)
@@ -48,16 +48,12 @@ total_aptos_filtrado = round(dataframe_corretos_filtrado["Aptos"].sum(), 2)
 total_bairro_filtrado = len(dataframe_corretos_filtrado["Bairro"].unique())
 total_local_filtrado = len(dataframe_corretos_filtrado["Local"].unique())
 
-st.markdown("#")
+
 col1, col2, col3 = st.columns(3)
 col1.metric("Total de Bairros", total_bairro_filtrado)
 col2.metric("Locais de Votação", total_local_filtrado)
 col3.metric("Total de Votantes", total_aptos_filtrado)
-st.markdown("""---""")
-
-# Exibição dos dados filtrados
-st.dataframe(dataframe_corretos_filtrado)
-st.markdown("#")
+#st.markdown("""---""")
 
 # Cálculo da porcentagem do eleitorado representado pelos 1500 votos necessários
 votos_necessarios = st.number_input("Digite a quantidade de votos que quer alcançar:", min_value=0, step=1, value=2000)
@@ -71,6 +67,7 @@ if porcentagem_eleitorado < 0.01:
 
 st.write(f"Para alcançar os {votos_necessarios} votos necessários, você precisa conquistar aproximadamente {porcentagem_eleitorado:.2f}% do eleitorado.")
 st.markdown('#')
+
 ################################################################
 col1, col2 = st.columns([ 2, 1])
 
@@ -83,8 +80,9 @@ data_apoia_sarg['Quantidade de Votos do Sargento'] = data_apoia_sarg['Quantidade
 # Substituindo 'NA' por vazio
 data_apoia_sarg.replace('NA', '', inplace=True)
 
-total_votos_apoiadores = data_apoia_sarg['Quantidade de Votos do Apoiador'].sum()
-total_votos_sargentos = data_apoia_sarg['Quantidade de Votos do Sargento'].sum()
+total_votos_apoiadores = st.number_input("Digite a quantidade total de votos dos apoiadores:", min_value=0, step=1, value=data_apoia_sarg['Quantidade de Votos do Apoiador'].sum())
+total_votos_sargentos = st.number_input("Digite a quantidade total de votos dos sargentos:", min_value=0, step=1, value=data_apoia_sarg['Quantidade de Votos do Sargento'].sum())
+
 
 st.write(f"Total de Votos dos Apoiadores: {total_votos_apoiadores}")
 st.write(f"Total de Votos dos Sargentos: {total_votos_sargentos}")
@@ -118,8 +116,8 @@ with col1:
 with col2:
     labels = ['Apoiadores', 'Sargentos']
     sizes = [
-        data_apoia_sarg['Quantidade de Votos do Apoiador'].sum(),
-        data_apoia_sarg['Quantidade de Votos do Sargento'].sum()
+        total_votos_apoiadores,
+        total_votos_sargentos
     ]
     colors = ['#209A0D', '#EBBF04']  # Cores correspondentes aos segmentos
 
@@ -133,3 +131,8 @@ with col2:
     # Exibir o gráfico
     st.pyplot(plt)
 ############ GRAFICO DE PIZZA ################
+
+st.markdown("#")
+st.title("Dados das comunidade e locais de votação")
+st.dataframe(dataframe_corretos_filtrado)
+
