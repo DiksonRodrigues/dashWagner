@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 
+
 # Leitura dos dados
 dataframe_corretos = pd.read_csv('dados-corretos1.csv', encoding='utf8')
 
