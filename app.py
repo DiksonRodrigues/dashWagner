@@ -14,7 +14,7 @@ st.set_page_config(
 )
 
 # Cabeçalho na página principal
-
+st.markdown("#")
 st.header(":cherries: Eleições 2024 Wagner da Acerola :cherries:")
 
 
